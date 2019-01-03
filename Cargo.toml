@@ -1,0 +1,12 @@
+[package]
+name = "firal"
+version = "0.1.0"
+authors = ["Hong Shick Pak <hong@hspak.com>"]
+edition = "2018"
+
+[dependencies]
+chrono = "0.4"
+postgres = { version = "0.15.2", features = ["with-chrono"] }
+serde = { version = "1.0.82", features = ["derive"] }
+structopt = "0.2"
+toml = "0.4"
