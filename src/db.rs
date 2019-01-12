@@ -14,6 +14,8 @@ pub fn init() -> Result<Connection, Box<Error>> {
         ),
         TlsMode::None,
     )?;
+
+    // Opting not to use INET types for IP because the rust-postgres lib doesn't support it.
     conn.execute(
         "CREATE TABLE IF NOT EXISTS entries(
             id              BIGSERIAL PRIMARY KEY,
@@ -21,15 +23,15 @@ pub fn init() -> Result<Connection, Box<Error>> {
             dst_port        INT,
             packet_id       INT,
             packet_size     INT,
-            src_ip          VARCHAR(16),
-            dst_ip          VARCHAR(16),
-            in_interface    VARCHAR(16),
-            out_interface   VARCHAR(16),
-            protocol        VARCHAR(16),
-            flow_type       VARCHAR(16),
-            rule_id         VARCHAR(32),
-            logged_at       TIMESTAMP WITH TIME ZONE,
-            UNIQUE(src_ip, protocol, packet_id, logged_at)
+            src_ip          VARCHAR(16) NOT NULL CHECK (src_ip <> ''),
+            dst_ip          VARCHAR(16) NOT NULL CHECK (dst_ip <> ''),
+            in_interface    VARCHAR(16) NOT NULL,
+            out_interface   VARCHAR(16) NOT NULL,
+            protocol        VARCHAR(16) NOT NULL,
+            flow_type       VARCHAR(16) NOT NULL,
+            rule_id         VARCHAR(32) NOT NULL,
+            logged_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+            UNIQUE(src_ip, protocol, packet_id, packet_size, logged_at)
         )",
         &[],
     )?;
